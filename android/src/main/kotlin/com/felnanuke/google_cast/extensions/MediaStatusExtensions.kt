@@ -59,9 +59,19 @@ fun MediaStatus.toMap(): Map<String, Any?> {
     map["isMute"] = this.isMute
     map["streamVolume"] = this.streamVolume
     map["mediaInfo"] = this.mediaInfo?.toString()
-    
+
     // Advertisement state
     map["isPlayingAd"] = this.isPlayingAd
-    
+
+    // Live seekable range
+    map["liveSeekableRange"] = this.liveSeekableRange?.let { range ->
+        mapOf(
+            "start" to range.startTime,
+            "end" to range.endTime,
+            "isMovingWindow" to range.isMovingWindow,
+            "isLiveDone" to range.isLiveDone
+        )
+    }
+
     return map
 }
