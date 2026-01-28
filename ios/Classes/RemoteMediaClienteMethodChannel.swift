@@ -308,11 +308,24 @@ class RemoteMediaClienteMethodChannel :UIResponder, FlutterPlugin, GCKRemoteMedi
 
     func remoteMediaClient(_ client: GCKRemoteMediaClient, didUpdate mediaStatus: GCKMediaStatus?) {
         startListenPlayerPosition()
-     let data = mediaStatus?.toMap()
-       
+        let data = mediaStatus?.toMap()
+
+        // [DEBUG] Method Channelに送信する直前のdataを出力
+        NSLog("[flutter_chrome_cast/DEBUG/MethodChannel] Sending data via Method Channel")
+        if let data = data {
+            NSLog("[flutter_chrome_cast/DEBUG/MethodChannel] data keys: \(data.keys)")
+            if let liveRange = data["liveSeekableRange"] {
+                NSLog("[flutter_chrome_cast/DEBUG/MethodChannel] liveSeekableRange exists in data: \(liveRange)")
+            } else {
+                NSLog("[flutter_chrome_cast/DEBUG/MethodChannel] liveSeekableRange NOT found in data dictionary")
+            }
+        } else {
+            NSLog("[flutter_chrome_cast/DEBUG/MethodChannel] data is nil")
+        }
+
         channel?.invokeMethod("onUpdateMediaStatus", arguments:data)
         if client.mediaStatus?.idleReason == .finished {
-         onSessionEnd()
+            onSessionEnd()
         }
     }
     

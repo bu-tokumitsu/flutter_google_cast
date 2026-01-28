@@ -11,7 +11,8 @@ import GoogleCast
 extension GCKMediaStatus {
     
     func toMap() -> Dictionary<String, Any> {
-    
+        NSLog("[flutter_chrome_cast/DEBUG] GCKMediaStatus.toMap() called")
+
         var dict = Dictionary<String, Any>()
         dict["mediaSessionID"] = self.mediaSessionID
         dict["playerState"] = self.playerState.rawValue
@@ -26,13 +27,23 @@ extension GCKMediaStatus {
         dict["currentItemId"] = self.currentItemID
 
         // Live seekable range
+        NSLog("[flutter_chrome_cast/DEBUG] streamType: \(self.mediaInformation?.streamType.rawValue ?? 0)")
+        NSLog("[flutter_chrome_cast/DEBUG] liveSeekableRange: \(self.liveSeekableRange != nil ? "NOT nil" : "nil")")
+
         if let liveSeekableRange = self.liveSeekableRange {
+            NSLog("[flutter_chrome_cast/DEBUG] liveSeekableRange.startTime: \(liveSeekableRange.startTime)s")
+            NSLog("[flutter_chrome_cast/DEBUG] liveSeekableRange.endTime: \(liveSeekableRange.endTime)s")
+            NSLog("[flutter_chrome_cast/DEBUG] liveSeekableRange.isMovingWindow: \(liveSeekableRange.isMovingWindow)")
+            NSLog("[flutter_chrome_cast/DEBUG] liveSeekableRange.isLiveDone: \(liveSeekableRange.isLiveDone)")
+
             dict["liveSeekableRange"] = [
                 "start": Int(liveSeekableRange.startTime),
                 "end": Int(liveSeekableRange.endTime),
                 "isMovingWindow": liveSeekableRange.isMovingWindow,
                 "isLiveDone": liveSeekableRange.isLiveDone
             ]
+        } else {
+            NSLog("[flutter_chrome_cast/DEBUG] liveSeekableRange is nil - will not be added to dictionary")
         }
 
         // Add stream position if available, though it's usually retrieved separately

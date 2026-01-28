@@ -155,7 +155,8 @@ class GoogleCastRemoteMediaClientIOSMethodChannel
   FutureOr<void> _onUpdateMediaStatus(dynamic arguments) {
     if (arguments != null) {
       try {
-        arguments = Map<String, dynamic>.from(arguments);
+        // 再帰的にMap<String, dynamic>に変換（ネストされたMapも含む）
+        arguments = _convertToStringDynamicMap(arguments) as Map<String, dynamic>;
         final mediaStatus = GoogleCastIOSMediaStatus.fromMap(arguments);
         _queueHasNextItem = arguments["queueHasNextItem"];
         _mediaStatusStreamController.add(mediaStatus);
@@ -230,5 +231,21 @@ class GoogleCastRemoteMediaClientIOSMethodChannel
         'beforeItemWithId': beforeItemWithId,
       },
     );
+  }
+
+  /// Recursively converts to `Map<String, dynamic>`.
+  ///
+  /// Data received from Method Channel is of type `_Map<Object?, Object?>`,
+  /// and nested Maps have the same type, so recursive conversion is required.
+  dynamic _convertToStringDynamicMap(dynamic value) {
+    if (value is Map) {
+      return value.map((key, value) => MapEntry(
+        key.toString(),
+        _convertToStringDynamicMap(value),
+      ));
+    } else if (value is List) {
+      return value.map((item) => _convertToStringDynamicMap(item)).toList();
+    }
+    return value;
   }
 }
