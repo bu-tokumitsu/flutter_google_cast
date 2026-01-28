@@ -155,7 +155,7 @@ class GoogleCastRemoteMediaClientIOSMethodChannel
   FutureOr<void> _onUpdateMediaStatus(dynamic arguments) {
     if (arguments != null) {
       try {
-        // 再帰的にMap<String, dynamic>に変換（ネストされたMapも含む）
+        // Recursively convert to Map<String, dynamic> (including nested Maps)
         arguments = _convertToStringDynamicMap(arguments) as Map<String, dynamic>;
         final mediaStatus = GoogleCastIOSMediaStatus.fromMap(arguments);
         _queueHasNextItem = arguments["queueHasNextItem"];
